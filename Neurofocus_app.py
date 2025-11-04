@@ -224,4 +224,3 @@ if st.session_state.running:
     # Wait and rerun
     time.sleep(sample_interval)
     st.rerun()
-
