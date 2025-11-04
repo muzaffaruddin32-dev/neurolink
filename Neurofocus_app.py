@@ -1,4 +1,3 @@
-# neurofocus_app.py — fixed version
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -13,8 +12,8 @@ import random
 # CONFIGURATION
 # ===============================
 ARDUINO_BAUD = 115200
-SAMPLE_INTERVAL = 0.25  # seconds
-SMOOTH_WINDOW = 8       # samples (~2 sec)
+SAMPLE_INTERVAL = 0.25 # seconds
+SMOOTH_WINDOW = 8 # samples (~2 sec)
 THRESH_HIGH = 70
 THRESH_MED = 40
 
@@ -27,7 +26,6 @@ def find_arduino_port():
         if 'Arduino' in p.description or 'USB Serial' in p.description or 'CH340' in p.description:
             return p.device
     return None
-
 
 # ===============================
 # SERIAL COMMUNICATION CLASSES
@@ -79,7 +77,6 @@ class SerialReader(threading.Thread):
     def stop(self):
         self._stop = True
 
-
 class ArduinoWriter:
     def __init__(self, port, baud):
         self.port = port
@@ -101,7 +98,6 @@ class ArduinoWriter:
                     pass
                 self.ser = None
 
-
 # ===============================
 # STREAMLIT UI
 # ===============================
@@ -114,8 +110,8 @@ with st.sidebar:
     demo_mode = st.checkbox("Use Demo Mode (no hardware)", value=True)
     sample_interval = st.number_input("Sample interval (s)", value=SAMPLE_INTERVAL, min_value=0.1, step=0.1)
     smooth_w = st.slider("Smoothing window (samples)", 1, 30, SMOOTH_WINDOW)
-    th_high = st.slider("Green threshold (>=)", 50, 100, THRESH_HIGH)
-    th_med = st.slider("Yellow threshold (< and >=)", 0, 99, THRESH_MED)
+    th_high = st.slider("Green threshold (≥)", 50, 100, THRESH_HIGH)
+    th_med = st.slider("Yellow threshold (< and ≥)", 0, 99, THRESH_MED)
     st.write("Green ≥", th_high)
     st.write("Yellow ≥", th_med, "and <", th_high)
     st.write("Red <", th_med)
@@ -168,7 +164,7 @@ if start:
             st.session_state.reader = reader
             st.session_state.writer = ArduinoWriter(port, ARDUINO_BAUD)
 
-    st.rerun()
+    st.experimental_rerun()
 
 # ===============================
 # STOP BUTTON
@@ -179,10 +175,10 @@ if stop:
         st.session_state.reader.stop()
         st.session_state.reader = None
     st.success("🛑 Monitoring stopped.")
-    st.rerun()
+    st.experimental_rerun()
 
 # ===============================
-# MONITORING LOOP (AUTO-REFRESH)
+# MONITORING LOOP
 # ===============================
 if st.session_state.running:
     # Simulate or read data
@@ -223,4 +219,4 @@ if st.session_state.running:
 
     # Wait and rerun
     time.sleep(sample_interval)
-    st.rerun()
+    st.experimental_rerun()
